@@ -1,0 +1,454 @@
+{
+  "patients": [
+    {
+      "id": "P003",
+      "name": "Yasmine Abdullah",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 1,
+      "treatment_duration": 205,
+      "mortality_window": 1238
+    },
+    {
+      "id": "P014",
+      "name": "Ibrahim Shawky",
+      "condition": "heart",
+      "severity": 2,
+      "arrival_time": 2,
+      "treatment_duration": 252,
+      "mortality_window": 1274
+    },
+    {
+      "id": "P008",
+      "name": "Yasmine Shawky",
+      "condition": "diabetes",
+      "severity": 2,
+      "arrival_time": 7,
+      "treatment_duration": 170,
+      "mortality_window": 1565
+    },
+    {
+      "id": "P019",
+      "name": "Yasmine Sayed",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 7,
+      "treatment_duration": 190,
+      "mortality_window": 1811
+    },
+    {
+      "id": "P002",
+      "name": "Mona Abdullah",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 8,
+      "treatment_duration": 289,
+      "mortality_window": 1089
+    },
+    {
+      "id": "P006",
+      "name": "Nour Sayed",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 9,
+      "treatment_duration": 236,
+      "mortality_window": 1104
+    },
+    {
+      "id": "P010",
+      "name": "Fatma Hassan",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 14,
+      "treatment_duration": 247,
+      "mortality_window": 1284
+    },
+    {
+      "id": "P018",
+      "name": "Mohamed Fathi",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 14,
+      "treatment_duration": 280,
+      "mortality_window": 1505
+    },
+    {
+      "id": "P005",
+      "name": "Sara Mansour",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 17,
+      "treatment_duration": 190,
+      "mortality_window": 1714
+    },
+    {
+      "id": "P007",
+      "name": "Aya Tawfiq",
+      "condition": "heart",
+      "severity": 2,
+      "arrival_time": 22,
+      "treatment_duration": 217,
+      "mortality_window": 1826
+    },
+    {
+      "id": "P009",
+      "name": "Kareem Sayed",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 23,
+      "treatment_duration": 167,
+      "mortality_window": 1046
+    },
+    {
+      "id": "P011",
+      "name": "Omar Osman",
+      "condition": "diabetes",
+      "severity": 2,
+      "arrival_time": 23,
+      "treatment_duration": 203,
+      "mortality_window": 1686
+    },
+    {
+      "id": "P013",
+      "name": "Mohamed Ali",
+      "condition": "diabetes",
+      "severity": 2,
+      "arrival_time": 24,
+      "treatment_duration": 292,
+      "mortality_window": 1224
+    },
+    {
+      "id": "P020",
+      "name": "Nada Fathi",
+      "condition": "diabetes",
+      "severity": 2,
+      "arrival_time": 24,
+      "treatment_duration": 269,
+      "mortality_window": 1541
+    },
+    {
+      "id": "P004",
+      "name": "Aya Osman",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 35,
+      "treatment_duration": 289,
+      "mortality_window": 1429
+    },
+    {
+      "id": "P017",
+      "name": "Nour El-Masry",
+      "condition": "general",
+      "severity": 2,
+      "arrival_time": 35,
+      "treatment_duration": 299,
+      "mortality_window": 1438
+    },
+    {
+      "id": "P015",
+      "name": "Nour Shawky",
+      "condition": "respiratory",
+      "severity": 2,
+      "arrival_time": 36,
+      "treatment_duration": 204,
+      "mortality_window": 1671
+    },
+    {
+      "id": "P001",
+      "name": "Mahmoud Ali",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 40,
+      "treatment_duration": 156,
+      "mortality_window": 1759
+    },
+    {
+      "id": "P012",
+      "name": "Youssef Fawzy",
+      "condition": "general",
+      "severity": 1,
+      "arrival_time": 40,
+      "treatment_duration": 286,
+      "mortality_window": 1746
+    },
+    {
+      "id": "P016",
+      "name": "Mahmoud Gaber",
+      "condition": "fracture",
+      "severity": 2,
+      "arrival_time": 41,
+      "treatment_duration": 186,
+      "mortality_window": 1271
+    },
+    {
+      "id": "P021",
+      "name": "Ali Mansour",
+      "condition": "diabetes",
+      "severity": 4,
+      "arrival_time": 60,
+      "treatment_duration": 74,
+      "mortality_window": 124
+    },
+    {
+      "id": "P031",
+      "name": "Omar Shawky",
+      "condition": "fracture",
+      "severity": 4,
+      "arrival_time": 60,
+      "treatment_duration": 80,
+      "mortality_window": 97
+    },
+    {
+      "id": "P032",
+      "name": "Salma Ali",
+      "condition": "respiratory",
+      "severity": 5,
+      "arrival_time": 62,
+      "treatment_duration": 44,
+      "mortality_window": 155
+    },
+    {
+      "id": "P027",
+      "name": "Tarek Tawfiq",
+      "condition": "fracture",
+      "severity": 4,
+      "arrival_time": 68,
+      "treatment_duration": 70,
+      "mortality_window": 160
+    },
+    {
+      "id": "P024",
+      "name": "Yasmine El-Masry",
+      "condition": "heart",
+      "severity": 5,
+      "arrival_time": 69,
+      "treatment_duration": 50,
+      "mortality_window": 159
+    },
+    {
+      "id": "P023",
+      "name": "Yasmine Ali",
+      "condition": "general",
+      "severity": 4,
+      "arrival_time": 71,
+      "treatment_duration": 80,
+      "mortality_window": 128
+    },
+    {
+      "id": "P026",
+      "name": "Nada Farouk",
+      "condition": "heart",
+      "severity": 4,
+      "arrival_time": 75,
+      "treatment_duration": 45,
+      "mortality_window": 152
+    },
+    {
+      "id": "P030",
+      "name": "Dina Ali",
+      "condition": "fracture",
+      "severity": 4,
+      "arrival_time": 81,
+      "treatment_duration": 77,
+      "mortality_window": 160
+    },
+    {
+      "id": "P029",
+      "name": "Mahmoud Sayed",
+      "condition": "heart",
+      "severity": 5,
+      "arrival_time": 83,
+      "treatment_duration": 73,
+      "mortality_window": 147
+    },
+    {
+      "id": "P022",
+      "name": "Heba Farouk",
+      "condition": "diabetes",
+      "severity": 4,
+      "arrival_time": 87,
+      "treatment_duration": 69,
+      "mortality_window": 90
+    },
+    {
+      "id": "P035",
+      "name": "Nour Gaber",
+      "condition": "heart",
+      "severity": 5,
+      "arrival_time": 87,
+      "treatment_duration": 69,
+      "mortality_window": 96
+    },
+    {
+      "id": "P034",
+      "name": "Mona El-Masry",
+      "condition": "fracture",
+      "severity": 5,
+      "arrival_time": 90,
+      "treatment_duration": 52,
+      "mortality_window": 102
+    },
+    {
+      "id": "P025",
+      "name": "Mahmoud Abdullah",
+      "condition": "diabetes",
+      "severity": 4,
+      "arrival_time": 91,
+      "treatment_duration": 47,
+      "mortality_window": 136
+    },
+    {
+      "id": "P033",
+      "name": "Mahmoud Farouk",
+      "condition": "respiratory",
+      "severity": 4,
+      "arrival_time": 94,
+      "treatment_duration": 76,
+      "mortality_window": 163
+    },
+    {
+      "id": "P028",
+      "name": "Kareem Kamal",
+      "condition": "fracture",
+      "severity": 5,
+      "arrival_time": 98,
+      "treatment_duration": 53,
+      "mortality_window": 159
+    },
+    {
+      "id": "P050",
+      "name": "Fatma Mansour",
+      "condition": "fracture",
+      "severity": 4,
+      "arrival_time": 136,
+      "treatment_duration": 88,
+      "mortality_window": 375
+    },
+    {
+      "id": "P037",
+      "name": "Omar Fawzy",
+      "condition": "heart",
+      "severity": 5,
+      "arrival_time": 137,
+      "treatment_duration": 103,
+      "mortality_window": 221
+    },
+    {
+      "id": "P045",
+      "name": "Nour Sayed",
+      "condition": "fracture",
+      "severity": 2,
+      "arrival_time": 143,
+      "treatment_duration": 88,
+      "mortality_window": 322
+    },
+    {
+      "id": "P042",
+      "name": "Dina Gaber",
+      "condition": "heart",
+      "severity": 4,
+      "arrival_time": 144,
+      "treatment_duration": 107,
+      "mortality_window": 397
+    },
+    {
+      "id": "P039",
+      "name": "Ibrahim Fathi",
+      "condition": "respiratory",
+      "severity": 3,
+      "arrival_time": 150,
+      "treatment_duration": 132,
+      "mortality_window": 274
+    },
+    {
+      "id": "P036",
+      "name": "Nada Fawzy",
+      "condition": "fracture",
+      "severity": 2,
+      "arrival_time": 163,
+      "treatment_duration": 111,
+      "mortality_window": 199
+    },
+    {
+      "id": "P048",
+      "name": "Omar Abdullah",
+      "condition": "diabetes",
+      "severity": 3,
+      "arrival_time": 170,
+      "treatment_duration": 118,
+      "mortality_window": 267
+    },
+    {
+      "id": "P040",
+      "name": "Nour Mansour",
+      "condition": "heart",
+      "severity": 2,
+      "arrival_time": 171,
+      "treatment_duration": 101,
+      "mortality_window": 247
+    },
+    {
+      "id": "P041",
+      "name": "Salma Hassan",
+      "condition": "general",
+      "severity": 4,
+      "arrival_time": 178,
+      "treatment_duration": 134,
+      "mortality_window": 328
+    },
+    {
+      "id": "P049",
+      "name": "Heba Mansour",
+      "condition": "fracture",
+      "severity": 2,
+      "arrival_time": 178,
+      "treatment_duration": 89,
+      "mortality_window": 287
+    },
+    {
+      "id": "P044",
+      "name": "Omar Fathi",
+      "condition": "general",
+      "severity": 3,
+      "arrival_time": 184,
+      "treatment_duration": 87,
+      "mortality_window": 395
+    },
+    {
+      "id": "P043",
+      "name": "Dina Fawzy",
+      "condition": "heart",
+      "severity": 2,
+      "arrival_time": 189,
+      "treatment_duration": 120,
+      "mortality_window": 164
+    },
+    {
+      "id": "P038",
+      "name": "Ahmed Sayed",
+      "condition": "general",
+      "severity": 2,
+      "arrival_time": 190,
+      "treatment_duration": 86,
+      "mortality_window": 316
+    },
+    {
+      "id": "P046",
+      "name": "Mona Nasser",
+      "condition": "heart",
+      "severity": 3,
+      "arrival_time": 192,
+      "treatment_duration": 85,
+      "mortality_window": 308
+    },
+    {
+      "id": "P047",
+      "name": "Mahmoud Mansour",
+      "condition": "diabetes",
+      "severity": 4,
+      "arrival_time": 194,
+      "treatment_duration": 113,
+      "mortality_window": 202
+    }
+  ]
+}

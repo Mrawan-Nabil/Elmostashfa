@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elmostashfa Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    :root {
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --border: #e2e8f0;
+      --border-2: #cbd5e1;
+      --text: #0f172a;
+      --text-2: #475569;
+      --text-3: #94a3b8;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --green: #16a34a;
+      --green-light: #f0fdf4;
+      --orange: #ea580c;
+      --orange-light: #fff7ed;
+      --red: #dc2626;
+      --red-light: #fef2f2;
+      --yellow: #ca8a04;
+      --yellow-light: #fefce8;
+      --sev-1: #16a34a;
+      --sev-2: #65a30d;
+      --sev-3: #ca8a04;
+      --sev-4: #ea580c;
+      --sev-5: #dc2626;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-width: 1280px;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    
+    button {
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      border: none;
+      background: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+      transition: all 0.2s ease;
+      font-size: 14px;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+    .btn-outline { border: 1px solid var(--border-2); background: var(--surface); color: var(--text); }
+    .btn-outline:hover:not(:disabled) { background: var(--surface-2); border-color: var(--text-3); }
+    .btn-ghost { color: var(--text-2); }
+    .btn-ghost:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
+    
+    /* Typography */
+    h1 { font-size: 20px; font-weight: 700; color: var(--text); }
+    h2 { font-size: 16px; font-weight: 600; color: var(--text); }
+    .text-2 { color: var(--text-2); }
+    .text-3 { color: var(--text-3); }
+    .hidden { display: none !important; }
+    
+    /* 1. Sticky Navigation Bar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+    
+    .logo-container { display: flex; align-items: center; gap: 8px; }
+    .logo-icon { color: var(--accent); width: 24px; height: 24px; }
+    
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .status-dot.idle { background: var(--text-3); }
+    .status-dot.running { background: var(--accent); animation: pulse 2s infinite; }
+    .status-dot.paused { background: var(--yellow); }
+    .status-dot.finished { background: var(--green); }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); } }
+    
+    .nav-controls { display: flex; align-items: center; gap: 8px; }
+    .divider { width: 1px; height: 24px; background: var(--border); margin: 0 8px; }
+    .speed-control { display: flex; background: var(--surface-2); border-radius: var(--radius-sm); padding: 2px; }
+    .speed-btn { padding: 4px 12px; border-radius: 6px; font-size: 13px; color: var(--text-2); }
+    .speed-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.1); font-weight: 600; }
+    
+    /* 2. Level Selector Bar */
+    .level-selector {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .level-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--surface);
+      flex: 1;
+    }
+    .level-card .level-title { font-weight: 600; font-size: 16px; margin-bottom: 4px; }
+    .level-card .level-hint { font-size: 12px; color: var(--text-3); text-align: center; }
+    
+    .level-card[data-level="easy"].active { border-color: var(--green); background: var(--green-light); color: var(--green); }
+    .level-card[data-level="easy"].active .level-hint { color: var(--green); }
+    .level-card[data-level="medium"].active { border-color: var(--yellow); background: var(--yellow-light); color: var(--yellow); }
+    .level-card[data-level="medium"].active .level-hint { color: var(--yellow); }
+    .level-card[data-level="hard"].active { border-color: var(--red); background: var(--red-light); color: var(--red); }
+    .level-card[data-level="hard"].active .level-hint { color: var(--red); }
+    
+    /* 3. Resource Configuration Panel */
+    .resource-config { padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .config-header { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-2); font-weight: 600; font-size: 14px; user-select: none; }
+    .config-header svg { transition: transform 0.2s ease; }
+    .resource-config.collapsed .config-header svg { transform: rotate(-90deg); }
+    .config-content { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; }
+    .resource-config.collapsed .config-content { display: none; }
+    
+    .resource-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+    .resource-card-header { display: flex; gap: 12px; align-items: flex-start; }
+    .resource-icon { width: 32px; height: 32px; background: var(--surface-2); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: var(--text-2); }
+    .resource-info { display: flex; flex-direction: column; }
+    .resource-name { font-weight: 600; font-size: 14px; }
+    .resource-sub { font-size: 11px; color: var(--text-3); }
+    .resource-count-container { display: flex; justify-content: space-between; align-items: center; }
+    .resource-count { font-size: 2rem; font-weight: 500; }
+    .resource-controls { display: flex; align-items: center; gap: 8px; background: var(--surface-2); border-radius: var(--radius-sm); padding: 4px; border: 1px solid var(--border); }
+    .res-btn { width: 24px; height: 24px; padding: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; color: var(--text-2); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .res-btn:hover { background: var(--border); }
+    .sufficiency-pill { align-self: flex-start; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .suff-sufficient { background: var(--green-light); color: var(--green); }
+    .suff-limited { background: var(--orange-light); color: var(--orange); }
+    .suff-critical { background: var(--red-light); color: var(--red); }
+    
+    /* 4. Main Tab Area */
+    .tabs-header { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); padding: 0 24px; position: relative; }
+    .tab-btn { padding: 16px 24px; background: none; border: none; font-size: 15px; font-weight: 500; color: var(--text-2); cursor: pointer; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid transparent; transition: color 0.2s ease; border-radius: 0; }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); }
+    .tab-indicator { position: absolute; bottom: -1px; height: 2px; background: var(--accent); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+    .tab-content { display: none; padding: 24px; animation: slideUpFade 0.3s ease forwards; }
+    .tab-content.active { display: block; }
+    @keyframes slideUpFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Stats Row */
+    .stats-row { display: flex; gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--border-2); }
+    .stat-card[data-stat="treated"]::before { background: var(--green); }
+    .stat-card[data-stat="wait"]::before { background: var(--orange); }
+    .stat-card[data-stat="saved"]::before { background: var(--accent); }
+    .stat-card[data-stat="mortality"]::before { background: var(--red); }
+    .stat-card[data-stat="mortality"] { background: var(--red-light); border-color: #fca5a5; }
+    
+    .stat-header { display: flex; align-items: center; gap: 8px; color: var(--text-2); font-size: 14px; font-weight: 500; }
+    .stat-value { font-size: 2.5rem; font-weight: 500; color: var(--text); line-height: 1; }
+    .stat-sub { font-size: 12px; color: var(--text-3); }
+    
+    /* Queue and Resources Split */
+    .main-split { display: flex; gap: 24px; margin-bottom: 24px; height: 500px; }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); display: flex; flex-direction: column; }
+    .panel-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .panel-title { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+    .badge { padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .badge-accent { background: var(--accent-light); color: var(--accent); }
+    
+    .queue-panel { width: 35%; }
+    .queue-list { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+    
+    /* Patient Card Placeholder */
+    .patient-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 12px; position: relative; display: flex; flex-direction: column; gap: 8px;
+      border-left: 4px solid var(--border-2);
+    }
+    
+    .resources-panel { width: 65%; }
+    .resources-grid { flex: 1; overflow-y: auto; padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; align-content: start; }
+    
+    /* Resource Unit Card Placeholder */
+    .unit-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); border-left: 4px solid var(--green); padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+    .unit-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .unit-title { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px;}
+    .unit-status { font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: var(--green-light); color: var(--green); }
+    .unit-slot { border: 1px dashed var(--border-2); border-radius: 4px; padding: 12px; text-align: center; color: var(--text-3); font-size: 13px; }
+    
+    /* Event Log */
+    .event-log-panel { height: 200px; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .log-list { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+    
+    /* 5. Comparison Panel */
+    .comparison-panel {
+      display: none; /* hidden by default */
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      margin: 24px;
+      padding: 24px;
+      animation: slideUpFade 0.4s ease forwards;
+    }
+    .comp-header { text-align: center; margin-bottom: 24px; font-size: 24px; }
+    .comp-grid { display: flex; gap: 24px; }
+    .comp-card { flex: 1; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .comp-card-header { padding: 16px; background: var(--surface-2); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .comp-card-title { font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 8px;}
+    .comp-row { display: flex; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .comp-row:last-child { border-bottom: none; }
+    .comp-row.winner { background: var(--green-light); font-weight: 600; }
+    .comp-footer { margin-top: 24px; display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--surface-2); border-radius: var(--radius); }
+    
+    /* Toast */
+    #toast-container { position: fixed; top: 80px; right: 24px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
+    .toast { padding: 12px 16px; border-radius: var(--radius-sm); background: var(--surface); box-shadow: var(--shadow-md); display: flex; align-items: center; gap: 12px; animation: slideInRight 0.3s ease forwards; font-size: 14px; font-weight: 500; border-left: 4px solid var(--border); }
+    .toast.success { border-left-color: var(--green); }
+    .toast.error { border-left-color: var(--red); }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fadeOut { to { opacity: 0; } }
+
+    /* Empty States */
+    .empty-state { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-3); font-size: 14px; gap: 12px; padding: 24px; text-align: center; }
+
+    /* Phase 3 Animations */
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .comparison-panel { animation: slideUpFade 500ms ease-out forwards; }
+
+    @keyframes patientArrive {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .patient-arrive { animation: patientArrive 280ms ease-out forwards; }
+
+    @keyframes patientLeave {
+      0%   { opacity: 1; transform: scale(1);    background: transparent; }
+      30%  { opacity: 1; transform: scale(1.02); background: var(--green-light); }
+      100% { opacity: 0; transform: scale(0.95) translateY(-8px); }
+    }
+    .patient-leave { animation: patientLeave 400ms ease forwards; }
+
+    @keyframes patientDeceased {
+      0%   { opacity: 1; background: transparent; }
+      40%  { opacity: 1; background: var(--red-light); }
+      100% { opacity: 0; transform: translateY(8px); }
+    }
+    .patient-deceased { animation: patientDeceased 600ms ease forwards; }
+
+    @keyframes atRiskPulse {
+      0%, 100% { border-color: var(--border); box-shadow: none; }
+      50%      { border-color: var(--red);   box-shadow: 0 0 0 3px rgba(220,38,38,0.15); }
+    }
+    .at-risk { animation: atRiskPulse 1.2s ease infinite; }
+
+    @keyframes busyPulse {
+      0%, 100% { box-shadow: var(--shadow); }
+      50%      { box-shadow: 0 0 0 4px rgba(234,88,12,0.2), var(--shadow); }
+    }
+    .unit-busy { animation: busyPulse 2s infinite; }
+
+    @keyframes ac3Flash {
+      0%   { border-color: var(--border); }
+      40%  { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.2); }
+      100% { border-color: var(--border); }
+    }
+    .ac3-flash { animation: ac3Flash 400ms ease forwards; }
+
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Sticky Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo-container">
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+      </svg>
+      <h1>Elmostashfa</h1>
+    </div>
+    
+    <div class="status-badge" id="statusBadge">
+      <div class="status-dot idle" id="statusDot"></div>
+      <span id="statusText">Idle</span>
+    </div>
+    
+    <div class="nav-controls">
+      <input type="file" id="fileInput" accept=".json" class="hidden">
+      <button class="btn-outline" id="btnImport">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span id="importBtnText">Import JSON</span>
+      </button>
+      <button class="btn-ghost" id="btnSample">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        Quick Generate
+      </button>
+
+      <!-- inline: number input + generate button -->
+      <div id="customGenContainer" style="display:flex; align-items:center; gap:4px;">
+        <input
+          id="customGenInput"
+          type="number" min="1" max="200" placeholder="N"
+          style="width:60px; padding:6px 8px; border:1px solid var(--border-2);
+                 border-radius:var(--radius-sm); font-family:'JetBrains Mono',monospace;
+                 font-size:13px; font-weight:600; color:var(--text);
+                 background:var(--surface); outline:none; text-align:center;"
+        />
+        <button class="btn-outline" id="btnCustomGen" style="padding:6px 12px; font-size:13px;">
+          Generate
+        </button>
+      </div>
+      
+      <div class="divider"></div>
+      
+      <button class="btn-primary" id="btnPlay" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Start
+      </button>
+      <button class="btn-outline" id="btnPause" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        Pause
+      </button>
+      <button class="btn-ghost" id="btnReset" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Reset
+      </button>
+      
+      <div class="divider"></div>
+      
+      <div class="speed-control" id="speedControl">
+        <button class="speed-btn active" data-speed="1">1x</button>
+        <button class="speed-btn" data-speed="2">2x</button>
+        <button class="speed-btn" data-speed="5">5x</button>
+        <button class="speed-btn" data-speed="10">10x</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 2. Level Selector Bar -->
+  <div class="level-selector" id="levelSelector">
+    <div class="level-card active" data-level="easy">
+      <div class="level-title">Easy</div>
+      <div class="level-hint">Sufficient resources, learn the system</div>
+    </div>
+    <div class="level-card" data-level="medium">
+      <div class="level-title">Medium</div>
+      <div class="level-hint">Limited resources, moderate pressure</div>
+    </div>
+    <div class="level-card" data-level="hard">
+      <div class="level-title">Hard</div>
+      <div class="level-hint">Scarce resources, full crisis scenario</div>
+    </div>
+  </div>
+
+  <!-- 3. Resource Configuration Panel -->
+  <div class="resource-config" id="resourceConfig">
+    <div class="config-header" id="configToggle">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      Resource Configuration
+    </div>
+    <div class="config-content" id="resourceCardsContainer">
+      <!-- Cards rendered via JS -->
+    </div>
+  </div>
+
+  <!-- Main Tabs Area -->
+  <div class="tabs-container">
+    <div class="tabs-header">
+      <button class="tab-btn active" data-tab="csp">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        CSP Algorithm
+      </button>
+      <button class="tab-btn" data-tab="fcfs">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        FCFS Algorithm
+      </button>
+      <div class="tab-indicator" id="tabIndicator"></div>
+    </div>
+
+    <!-- CSP Tab -->
+    <div class="tab-content active" id="tab-csp">
+      <!-- [A] Stats Row -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Total Patients</div>
+          <div class="stat-value mono">--</div>
+          <div class="stat-sub">registered in simulation</div>
+        </div>
+        <div class="stat-card" data-stat="treated">
+          <div class="stat-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> In Treatment</div>
+          <div class="stat-value mono">--</div>
+          <div class="stat-sub">currently in rooms</div>
+        </div>
+        <div class="stat-card" data-stat="wait">
+          <div class="stat-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Avg Wait Time</div>
+          <div class="stat-value mono">-- min</div>
+          <div class="stat-sub">per patient</div>
+        </div>
+        <div class="stat-card" data-stat="saved">
+          <div class="stat-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Lives Saved</div>
+          <div class="stat-value mono">--</div>
+          <div class="stat-sub">vs. FCFS threshold</div>
+        </div>
+        <div class="stat-card" data-stat="mortality">
+          <div class="stat-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8v4c0 1.1-.9 2-2 2h20c-1.1 0-2-.9-2-2v-4a8 8 0 0 0-8-8z"/><path d="M9 18v2a3 3 0 0 0 6 0v-2"/><path d="M9 12h.01"/><path d="M15 12h.01"/></svg>
+            Mortality Count
+          </div>
+          <div class="stat-value mono">--</div>
+          <div class="stat-sub">exceeded treatment window</div>
+        </div>
+      </div>
+
+      <div class="main-split">
+        <!-- [B] Global Queue -->
+        <div class="panel queue-panel">
+          <div class="panel-header">
+            <div class="panel-title">Global Waiting Queue</div>
+            <div class="badge badge-accent">0 patients</div>
+          </div>
+          <div style="padding:8px 16px; font-size:12px; display:flex; gap:8px; align-items:center; border-bottom:1px solid var(--border);">
+             <span style="font-weight:600">Severity:</span>
+             <span style="color:var(--sev-1)">1 Low</span>
+             <span style="color:var(--sev-2)">2</span>
+             <span style="color:var(--sev-3)">3</span>
+             <span style="color:var(--sev-4)">4</span>
+             <span style="color:var(--sev-5)">5 Critical</span>
+          </div>
+          <div class="queue-list" id="queue-list-csp">
+             <div class="empty-state">Waiting for data import...</div>
+          </div>
+        </div>
+        
+        <!-- [C] Resources Grid -->
+        <div class="panel resources-panel">
+          <div class="panel-header">
+            <div class="panel-title">Resources Grid</div>
+            <div class="badge" style="background:var(--border);color:var(--text-2);">0% utilized</div>
+          </div>
+          <div class="resources-grid" id="resources-grid-csp">
+             <div class="empty-state" style="grid-column: 1 / -1;">Waiting for simulation...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [D] Event Log -->
+      <div class="panel event-log-panel">
+        <div class="panel-header" style="padding: 12px 16px;">
+          <div class="panel-title">Event Log</div>
+          <button class="btn-ghost" style="padding: 4px 8px; font-size: 12px;">Clear</button>
+        </div>
+        <div class="log-list" id="event-log-csp">
+           <div class="empty-state" style="padding: 0;">Waiting for simulation to start...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FCFS Tab -->
+    <div class="tab-content" id="tab-fcfs">
+      <!-- IDENTICAL LAYOUT TO CSP -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Total Patients</div>
+          <div class="stat-value mono">--</div>
+          <div class="stat-sub">registered in simulation</div>
+        </div>
+        <div class="stat-card" data-stat="treated">
+          <div class="stat-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> In Treatment</div>
+          <div class="stat-value mono">--</div>
+          <div class="stat-sub">currently in rooms</div>
+        </div>
+        <div class="stat-card" data-stat="wait">
+          <div class="stat-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Avg Wait Time</div>
+          <div class="stat-value mono">-- min</div>
+          <div class="stat-sub">per patient</div>
+        </div>
+        <div class="stat-card" data-stat="saved">
+          <div class="stat-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Lives Saved</div>
+          <div class="stat-value mono">--</div>
+          <div class="stat-sub">vs. FCFS threshold</div>
+        </div>
+        <div class="stat-card" data-stat="mortality">
+          <div class="stat-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8v4c0 1.1-.9 2-2 2h20c-1.1 0-2-.9-2-2v-4a8 8 0 0 0-8-8z"/><path d="M9 18v2a3 3 0 0 0 6 0v-2"/><path d="M9 12h.01"/><path d="M15 12h.01"/></svg>
+            Mortality Count
+          </div>
+          <div class="stat-value mono">--</div>
+          <div class="stat-sub">exceeded treatment window</div>
+        </div>
+      </div>
+
+      <div class="main-split">
+        <div class="panel queue-panel">
+          <div class="panel-header">
+            <div class="panel-title">Global Waiting Queue</div>
+            <div class="badge badge-accent">0 patients</div>
+          </div>
+          <div style="padding:8px 16px; font-size:12px; display:flex; gap:8px; align-items:center; border-bottom:1px solid var(--border);">
+             <span style="font-weight:600">Severity:</span>
+             <span style="color:var(--sev-1)">1 Low</span>
+             <span style="color:var(--sev-2)">2</span>
+             <span style="color:var(--sev-3)">3</span>
+             <span style="color:var(--sev-4)">4</span>
+             <span style="color:var(--sev-5)">5 Critical</span>
+          </div>
+          <div class="queue-list" id="queue-list-fcfs">
+             <div class="empty-state">Waiting for data import...</div>
+          </div>
+        </div>
+        
+        <div class="panel resources-panel">
+          <div class="panel-header">
+            <div class="panel-title">Resources Grid</div>
+            <div class="badge" style="background:var(--border);color:var(--text-2);">0% utilized</div>
+          </div>
+          <div class="resources-grid" id="resources-grid-fcfs">
+             <div class="empty-state" style="grid-column: 1 / -1;">Waiting for simulation...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel event-log-panel">
+        <div class="panel-header" style="padding: 12px 16px;">
+          <div class="panel-title">Event Log</div>
+          <button class="btn-ghost" style="padding: 4px 8px; font-size: 12px;">Clear</button>
+        </div>
+        <div class="log-list" id="event-log-fcfs">
+           <div class="empty-state" style="padding: 0;">Waiting for simulation to start...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Panel -->
+  <div class="comparison-panel" id="comparisonPanel">
+    <h2 class="comp-header">Final Comparison Results</h2>
+    <div class="comp-grid">
+      <div class="comp-card">
+        <div class="comp-card-header">
+          <div class="comp-card-title">
+            CSP Algorithm <span style="font-weight:400;color:var(--text-3);font-size:13px;">(Smart Allocation)</span>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10M6 4h12c1.1 0 2 .9 2 2v2c0 3.3-2.7 6-6 6h-4c-3.3 0-6-2.7-6-6V6c0-1.1.9-2 2-2z"/></svg>
+        </div>
+        <div class="comp-row"><span>Avg Wait Time</span><span class="mono">--</span></div>
+        <div class="comp-row"><span>Lives Saved</span><span class="mono">--</span></div>
+        <div class="comp-row"><span>Mortality Count</span><span class="mono">--</span></div>
+        <div class="comp-row"><span>Resource Utilization</span><span class="mono">--</span></div>
+        <div class="comp-row"><span>Max Queue Length</span><span class="mono">--</span></div>
+        <div class="comp-row"><span>Sev-5 Treated On Time</span><span class="mono">--</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-card-header">
+          <div class="comp-card-title">
+            FCFS Algorithm <span style="font-weight:400;color:var(--text-3);font-size:13px;">(Traditional)</span>
+          </div>
+        </div>
+        <div class="comp-row"><span>Avg Wait Time</span><span class="mono">--</span></div>
+        <div class="comp-row"><span>Lives Saved</span><span class="mono">--</span></div>
+        <div class="comp-row"><span>Mortality Count</span><span class="mono">--</span></div>
+        <div class="comp-row"><span>Resource Utilization</span><span class="mono">--</span></div>
+        <div class="comp-row"><span>Max Queue Length</span><span class="mono">--</span></div>
+        <div class="comp-row"><span>Sev-5 Treated On Time</span><span class="mono">--</span></div>
+      </div>
+    </div>
+    <div class="comp-charts-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0;">
+      <div class="chart-container" style="background:var(--surface-2); padding:16px; border-radius:8px; border:1px solid var(--border-2); position:relative;">
+        <h3 style="font-size:14px; margin-bottom:12px; font-weight:600; color:var(--text-1); text-align:center;">Average Wait Time Over Simulation</h3>
+        <canvas id="chart-waittime" style="width:100%; height:250px;"></canvas>
+      </div>
+      <div class="chart-container" style="background:var(--surface-2); padding:16px; border-radius:8px; border:1px solid var(--border-2); position:relative;">
+        <h3 style="font-size:14px; margin-bottom:12px; font-weight:600; color:var(--text-1); text-align:center;">Resource Utilization Rate</h3>
+        <canvas id="chart-utilization" style="width:100%; height:250px;"></canvas>
+      </div>
+      <div class="chart-container" style="background:var(--surface-2); padding:16px; border-radius:8px; border:1px solid var(--border-2); position:relative;">
+        <h3 style="font-size:14px; margin-bottom:12px; font-weight:600; color:var(--text-1); text-align:center;">Patient Severity Distribution</h3>
+        <canvas id="chart-severity" style="width:100%; height:250px;"></canvas>
+      </div>
+      <div class="chart-container" style="background:var(--surface-2); padding:16px; border-radius:8px; border:1px solid var(--border-2); position:relative;">
+        <h3 style="font-size:14px; margin-bottom:12px; font-weight:600; color:var(--text-1); text-align:center;">Global Queue Size Over Time</h3>
+        <canvas id="chart-queue" style="width:100%; height:250px;"></canvas>
+      </div>
+    </div>
+    <div class="mortality-analysis" style="background:var(--surface-2); padding:16px; border-radius:8px; border:1px solid var(--border-2); margin-bottom:24px;">
+      <h3 style="font-size:14px; margin-bottom:16px; font-weight:600; color:var(--text-1);">Mortality Analysis</h3>
+      <canvas id="chart-mortality" style="width:100%; height:100px;"></canvas>
+    </div>
+    <div class="comp-footer">
+      <div class="text-2" id="comp-summary">CSP was X% faster and prevented Y additional deaths</div>
+      <button class="btn-primary" onclick="exportResults()">Export Results</button>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script type="module">
+    import { EventBus, PriorityQueue, AC3, AStar, CSPEngine, FCFSEngine, PatientManager, ResourceManager, StatsEngine } from './algorithms.js';
+
+    // ── STATE ──────────────────────────────────────────────────────
+    const state = {
+      patients    : [],
+      resources   : { doctors:6, nurses:10, xray:4, ecg:4, labs:3, opRooms:2 },
+      simTime     : 0,
+      status      : "idle",   // idle | running | paused | finished
+      level       : "easy",
+      speed       : 1,
+      csp         : { stats: { treated: 0, deceased: 0, avgWaitMinutes: 0 }, maxQueue: 0 },
+      fcfs        : { stats: { treated: 0, deceased: 0, avgWaitMinutes: 0 }, maxQueue: 0 }
+    };
+
+    const RESOURCE_DEF = [
+      { id: 'doctors', name: 'Doctors', sub: 'Diagnosis and decision making', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2h-8V6a4 4 0 0 1 4-4z"/><path d="M6 10h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z"/></svg>' },
+      { id: 'nurses', name: 'Nurses', sub: 'Continuous patient support', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
+      { id: 'xray', name: 'X-Ray', sub: 'Imaging for fractures and lungs', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' },
+      { id: 'ecg', name: 'ECG Machines', sub: 'Cardiac monitoring and recording', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>' },
+      { id: 'labs', name: 'Lab Units', sub: 'Blood tests and analysis', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>' },
+      { id: 'opRooms', name: 'Op. Rooms', sub: 'Surgical & procedural rooms', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>' }
+    ];
+
+    // ── PHASE 3 CLASSES ────────────────────────────────────────────────
+    class ChartBase {
+      constructor(canvasId) {
+        this.canvas  = document.getElementById(canvasId);
+        this.ctx     = this.canvas.getContext("2d");
+        this.colors  = { csp: "#2563eb", fcfs: "#ea580c", grid: "#e2e8f0", text: "#475569", tooltip: "#0f172a" };
+        this.fonts   = { label: "11px 'JetBrains Mono', monospace", title: "600 13px 'Inter', sans-serif" };
+        this._setupHiDPI();
+      }
+      _setupHiDPI() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = this.canvas.getBoundingClientRect();
+        this.canvas.width  = rect.width  * dpr;
+        this.canvas.height = rect.height * dpr;
+        this.ctx.scale(dpr, dpr);
+        this.width  = rect.width;
+        this.height = rect.height;
+      }
+      clear() { this.ctx.clearRect(0, 0, this.width, this.height); }
+      animateDraw(drawFn, duration = 800) {
+        const start = performance.now();
+        const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+        const step = (now) => {
+          const progress = Math.min((now - start) / duration, 1);
+          drawFn(easeOutCubic(progress));
+          if (progress < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+      drawAxes(maxX, maxY, padX, padY, stepX, stepY) {
+        this.ctx.strokeStyle = this.colors.grid;
+        this.ctx.lineWidth = 1;
+        this.ctx.setLineDash([4, 4]);
+        
+        // Horizontal grid
+        for (let i = 0; i <= stepY; i++) {
+          const y = padY + (i / stepY) * (this.height - padY * 2);
+          this.ctx.beginPath(); this.ctx.moveTo(padX, y); this.ctx.lineTo(this.width - padX, y); this.ctx.stroke();
+          this.ctx.fillStyle = this.colors.text; this.ctx.font = this.fonts.label; this.ctx.textAlign = 'right';
+          this.ctx.fillText(((1 - i/stepY) * maxY).toFixed(1), padX - 10, y + 4);
+        }
+        
+        // Vertical grid
+        for (let i = 0; i <= stepX; i++) {
+          const x = padX + (i / stepX) * (this.width - padX * 2);
+          this.ctx.beginPath(); this.ctx.moveTo(x, padY); this.ctx.lineTo(x, this.height - padY); this.ctx.stroke();
+          this.ctx.fillStyle = this.colors.text; this.ctx.textAlign = 'center';
+          this.ctx.fillText(((i/stepX) * maxX).toFixed(0) + "m", x, this.height - padY + 16);
+        }
+        this.ctx.setLineDash([]);
+      }
+      drawLineChart(seriesA, seriesB, padX, padY, isArea = false, prog = 1) {
+        this.clear();
+        const allVals = [...seriesA, ...seriesB].map(v => v.val);
+        const maxY = allVals.length ? Math.max(...allVals, 1) * 1.1 : 1;
+        const allTimes = [...seriesA, ...seriesB].map(v => v.t);
+        const maxX = allTimes.length ? Math.max(...allTimes, 1) : 1;
+        
+        this.drawAxes(maxX/60, maxY, padX, padY, 6, 5);
+        
+        const drawSeries = (series, color) => {
+          if (!series.length) return;
+          const pts = series.filter(pt => (pt.t / maxX) <= prog).map(pt => ({
+            x: padX + (pt.t / maxX) * (this.width - padX * 2),
+            y: (this.height - padY) - (pt.val / maxY) * (this.height - padY * 2)
+          }));
+          
+          if (!pts.length) return;
+          
+          if (isArea) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(pts[0].x, this.height - padY);
+            pts.forEach(p => this.ctx.lineTo(p.x, p.y));
+            this.ctx.lineTo(pts[pts.length-1].x, this.height - padY);
+            this.ctx.fillStyle = color + "26"; // 15% opacity
+            this.ctx.fill();
+          }
+          
+          this.ctx.beginPath();
+          this.ctx.strokeStyle = color;
+          this.ctx.lineWidth = 2.5;
+          pts.forEach((p, i) => i===0 ? this.ctx.moveTo(p.x, p.y) : this.ctx.lineTo(p.x, p.y));
+          this.ctx.stroke();
+        };
+        
+        drawSeries(seriesB, this.colors.fcfs);
+        drawSeries(seriesA, this.colors.csp);
+      }
+    }
+
+    class LineChart extends ChartBase {
+      update(cspSeries, fcfsSeries) {
+        this.animateDraw((prog) => {
+          this.drawLineChart(cspSeries, fcfsSeries, 50, 40, false, prog);
+        });
+      }
+    }
+
+    class AreaChart extends ChartBase {
+      update(cspSeries, fcfsSeries) {
+        this.animateDraw((prog) => {
+          this.drawLineChart(cspSeries, fcfsSeries, 50, 40, true, prog);
+        });
+      }
+    }
+
+    class BarChart extends ChartBase {
+      update(cspUtil, fcfsUtil) {
+        // computeUtilization returns keys matching resource unit types: doctors, nurses, xray, ecg, lab, opRoom
+        const types  = ["doctors", "nurses", "xray", "ecg", "lab", "opRoom"];
+        const labels = ["Doctors", "Nurses", "X-Ray", "ECG", "Lab", "Op.Room"];
+        
+        this.animateDraw((prog) => {
+          this.clear();
+          const padX = 55, padY = 40;
+          const chartW = this.width - padX * 2;
+          const chartH = this.height - padY * 2;
+
+          // Y axis grid lines (0–100%)
+          this.ctx.strokeStyle = this.colors.grid;
+          this.ctx.lineWidth = 1;
+          this.ctx.setLineDash([4, 4]);
+          for (let i = 0; i <= 4; i++) {
+            const y = padY + (i / 4) * chartH;
+            this.ctx.beginPath();
+            this.ctx.moveTo(padX, y);
+            this.ctx.lineTo(this.width - padX, y);
+            this.ctx.stroke();
+            this.ctx.fillStyle = this.colors.text;
+            this.ctx.font = this.fonts.label;
+            this.ctx.textAlign = 'right';
+            this.ctx.fillText(((1 - i/4) * 100).toFixed(0) + "%", padX - 6, y + 4);
+          }
+          this.ctx.setLineDash([]);
+
+          const groupW = chartW / types.length;
+          const barW = groupW * 0.28;
+
+          types.forEach((type, i) => {
+            const cx = padX + (i + 0.5) * groupW;
+            const cVal = (cspUtil[type] || 0) * prog;
+            const fVal = (fcfsUtil[type] || 0) * prog;
+
+            const drawBar = (val, offset, color) => {
+              const h = (val / 100) * chartH;
+              if (h <= 0) return;
+              this.ctx.fillStyle = color;
+              this.ctx.beginPath();
+              if (this.ctx.roundRect) {
+                this.ctx.roundRect(cx + offset - barW / 2, padY + chartH - h, barW, h, [3, 3, 0, 0]);
+              } else {
+                this.ctx.rect(cx + offset - barW / 2, padY + chartH - h, barW, h);
+              }
+              this.ctx.fill();
+              this.ctx.fillStyle = this.colors.text;
+              this.ctx.font = this.fonts.label;
+              this.ctx.textAlign = 'center';
+              this.ctx.fillText(Math.round(val) + "%", cx + offset, padY + chartH - h - 4);
+            };
+
+            drawBar(fVal, barW / 2 + 2, this.colors.fcfs);
+            drawBar(cVal, -(barW / 2 + 2), this.colors.csp);
+
+            this.ctx.fillStyle = this.colors.text;
+            this.ctx.font = this.fonts.label;
+            this.ctx.textAlign = 'center';
+            this.ctx.fillText(labels[i], cx, padY + chartH + 16);
+          });
+
+          // Legend
+          this.ctx.font = this.fonts.label;
+          this.ctx.fillStyle = this.colors.csp;
+          this.ctx.fillRect(this.width - padX - 80, padY, 10, 10);
+          this.ctx.fillStyle = this.colors.text;
+          this.ctx.textAlign = 'left';
+          this.ctx.fillText("CSP", this.width - padX - 66, padY + 9);
+          this.ctx.fillStyle = this.colors.fcfs;
+          this.ctx.fillRect(this.width - padX - 80, padY + 16, 10, 10);
+          this.ctx.fillStyle = this.colors.text;
+          this.ctx.fillText("FCFS", this.width - padX - 66, padY + 25);
+        }, 600);
+      }
+    }
+
+    class DonutChart extends ChartBase {
+      update(severityCounts) {
+        const total = Object.values(severityCounts).reduce((a,b)=>a+b, 0);
+        const colors = {1: '#22c55e', 2: '#3b82f6', 3: '#eab308', 4: '#f97316', 5: '#ef4444'};
+        
+        this.animateDraw((prog) => {
+          this.clear();
+          const cx = this.width * 0.4, cy = this.height / 2;
+          const outerR = Math.min(this.width, this.height) * 0.35;
+          const innerR = outerR * 0.55;
+          
+          let startAngle = -Math.PI / 2;
+          const maxProgAngle = Math.PI * 2 * prog;
+          
+          let currentProg = 0;
+          
+          for (let i=1; i<=5; i++) {
+            const count = severityCounts[i] || 0;
+            if (count === 0) continue;
+            
+            const sliceAngle = (count / total) * Math.PI * 2;
+            const drawAngle = Math.min(sliceAngle, maxProgAngle - currentProg);
+            
+            if (drawAngle > 0) {
+              this.ctx.beginPath();
+              this.ctx.arc(cx, cy, outerR, startAngle, startAngle + drawAngle);
+              this.ctx.arc(cx, cy, innerR, startAngle + drawAngle, startAngle, true);
+              this.ctx.fillStyle = colors[i];
+              this.ctx.fill();
+              
+              // Draw gap
+              this.ctx.lineWidth = 2;
+              this.ctx.strokeStyle = '#ffffff'; // match surface
+              this.ctx.stroke();
+            }
+            
+            startAngle += sliceAngle;
+            currentProg += sliceAngle;
+            if (currentProg >= maxProgAngle) break;
+          }
+          
+          if (prog === 1) {
+             this.ctx.fillStyle = this.colors.text;
+             this.ctx.textAlign = 'center';
+             this.ctx.font = "bold 20px 'JetBrains Mono'";
+             this.ctx.fillText(total, cx, cy - 2);
+             this.ctx.font = "12px 'Inter'";
+             this.ctx.fillText("Patients", cx, cy + 14);
+          }
+        }, 700);
+      }
+    }
+
+    class MortalityChart extends ChartBase {
+      update(cspStats, fcfsStats) {
+        this.animateDraw((prog) => {
+          this.clear();
+          const drawBar = (y, deceased, total, label) => {
+            const w = this.width - 150;
+            const h = 16;
+            this.ctx.fillStyle = this.colors.grid;
+            this.ctx.beginPath();
+            this.ctx.roundRect(100, y, w, h, 4);
+            this.ctx.fill();
+            
+            if (total > 0 && deceased > 0) {
+              const dw = (deceased / total) * w * prog;
+              this.ctx.fillStyle = '#ef4444';
+              this.ctx.beginPath();
+              this.ctx.roundRect(100, y, dw, h, 4);
+              this.ctx.fill();
+            }
+            
+            this.ctx.fillStyle = this.colors.text;
+            this.ctx.font = "bold 13px 'Inter'";
+            this.ctx.textAlign = 'right';
+            this.ctx.fillText(label, 90, y + 12);
+            
+            this.ctx.textAlign = 'left';
+            const pct = total > 0 ? (deceased / total * 100).toFixed(1) : 0;
+            this.ctx.fillText(`${deceased} deceased (${pct}%)`, 110 + w, y + 12);
+          };
+          drawBar(20, cspStats.deceased || 0, cspStats.totalPatients || state.patients.length, "CSP:");
+          drawBar(50, fcfsStats.deceased || 0, fcfsStats.totalPatients || state.patients.length, "FCFS:");
+        }, 800);
+      }
+    }
+
+    class Exporter {
+      export(cspStatsObj, fcfsStatsObj, resources, level, simDuration) {
+        const data = {
+          export_metadata: { generated_at: new Date().toISOString(), simulation_duration_seconds: simDuration, difficulty_level: level },
+          resources_configured: resources,
+          csp_results: cspStatsObj,
+          fcfs_results: fcfsStatsObj,
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = `medialloc-results-${Date.now()}.json`;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    class Validator {
+      validate(data) {
+        const errors = [];
+        if (!data || typeof data !== "object") return { valid: false, errors: ["Root must be a JSON object"] };
+        if (!Array.isArray(data.patients)) return { valid: false, errors: ["Missing required field: patients"] };
+        if (data.patients.length === 0) errors.push("patients array is empty");
+        const ALLOWED_CONDITIONS = ["heart","fracture","diabetes","respiratory","general"];
+        data.patients.forEach((p, i) => {
+          if (!p.id || !p.name) errors.push(`Patient[${i}]: missing id or name`);
+          if (!ALLOWED_CONDITIONS.includes(p.condition)) errors.push(`Patient[${i}]: invalid condition`);
+        });
+        return { valid: errors.length === 0, errors };
+      }
+    }
+
+    // ── SIMULATION ENGINE INIT ───────────────────────────────────────────
+    let bus = new EventBus();
+    let cspEngine = null;
+    let fcfsEngine = null;
+    let patientManager = null;
+    let cspResources = null;
+    let fcfsResources = null;
+    let cspStats = null;
+    let fcfsStats = null;
+
+    function registerBusListeners() {
+      bus.on("queue:updated", (data) => renderQueue(data.algorithm));
+      bus.on("resource:updated", (data) => renderResources(data.algorithm));
+      bus.on("log:event", (data) => renderEventLog(data));
+      bus.on("stats:updated", (data) => {
+        if (data.algorithm === "csp") {
+          state.csp.stats = data.stats;
+          state.csp.maxQueue = Math.max(state.csp.maxQueue, cspEngine ? cspEngine.globalQueue.size : 0);
+        } else {
+          state.fcfs.stats = data.stats;
+          state.fcfs.maxQueue = Math.max(state.fcfs.maxQueue, fcfsEngine ? fcfsEngine.globalQueue.size : 0);
+        }
+        renderStats(data.algorithm);
+      });
+    }
+
+    function initEngines() {
+      // Create a fresh EventBus each time to avoid stacking listeners
+      bus = new EventBus();
+      registerBusListeners();
+
+      cspEngine = new CSPEngine(bus, state.resources);
+      fcfsEngine = new FCFSEngine(bus, state.resources);
+      cspResources = new ResourceManager(bus, state.resources, "csp");
+      fcfsResources = new ResourceManager(bus, state.resources, "fcfs");
+      cspEngine.resourceUnits = cspResources.getUnits();
+      fcfsEngine.resourceUnits = fcfsResources.getUnits();
+      
+      patientManager = new PatientManager(bus, cspEngine, fcfsEngine);
+      patientManager.loadPatients(state.patients);
+      
+      cspStats = new StatsEngine(bus, "csp", cspEngine);
+      fcfsStats = new StatsEngine(bus, "fcfs", fcfsEngine);
+      
+      state.csp.maxQueue = 0;
+      state.fcfs.maxQueue = 0;
+      state.csp.stats = { treated: 0, deceased: 0, avgWaitMinutes: 0, totalPatients: 0 };
+      state.fcfs.stats = { treated: 0, deceased: 0, avgWaitMinutes: 0, totalPatients: 0 };
+      
+      document.getElementById("event-log-csp").innerHTML = "";
+      document.getElementById("event-log-fcfs").innerHTML = "";
+      
+      updateUI();
+    }
+
+    registerBusListeners();
+
+    // ── SIMULATION CLOCK ───────────────────────────────────────────
+    let clockInterval = null;
+    const TICK_MS = 100;
+    const SPEED_MAP = { 1:1, 2:2, 5:5, 10:10 };
+
+    function startClock() {
+      if (state.status === "idle" || state.status === "paused") {
+        if (state.status === "idle") {
+          initEngines();
+        }
+        state.status = "running";
+        updateStatusBadge(state.status);
+        document.getElementById('btnPlay').disabled = true;
+        document.getElementById('btnPause').disabled = false;
+        document.getElementById('btnReset').disabled = false;
+        clockInterval = setInterval(onTick, TICK_MS);
+      }
+    }
+    
+    function pauseClock() {
+      if (state.status === "running") {
+        state.status = "paused";
+        updateStatusBadge(state.status);
+        document.getElementById('btnPlay').disabled = false;
+        document.getElementById('btnPause').disabled = true;
+        clearInterval(clockInterval);
+      }
+    }
+    
+    function resetClock() {
+      clearInterval(clockInterval);
+      state.simTime = 0;
+      state.status = "idle";
+      updateStatusBadge(state.status);
+      document.getElementById('btnPlay').disabled = (state.patients.length === 0);
+      document.getElementById('btnPause').disabled = true;
+      document.getElementById('btnReset').disabled = true;
+      document.getElementById('comparisonPanel').style.display = 'none';
+      
+      // Reset engine state without re-registering bus listeners
+      cspEngine = null;
+      fcfsEngine = null;
+      patientManager = null;
+      cspResources = null;
+      fcfsResources = null;
+      cspStats = null;
+      fcfsStats = null;
+      state.csp.stats = { treated: 0, deceased: 0, avgWaitMinutes: 0, totalPatients: 0 };
+      state.fcfs.stats = { treated: 0, deceased: 0, avgWaitMinutes: 0, totalPatients: 0 };
+      state.csp.maxQueue = 0;
+      state.fcfs.maxQueue = 0;
+      
+      document.getElementById("event-log-csp").innerHTML = '<div class="empty-state" style="padding:0;">Waiting for simulation to start...</div>';
+      document.getElementById("event-log-fcfs").innerHTML = '<div class="empty-state" style="padding:0;">Waiting for simulation to start...</div>';
+      document.getElementById("queue-list-csp").innerHTML = '<div class="empty-state">Queue is empty</div>';
+      document.getElementById("queue-list-fcfs").innerHTML = '<div class="empty-state">Queue is empty</div>';
+      document.getElementById("resources-grid-csp").innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Waiting for simulation...</div>';
+      document.getElementById("resources-grid-fcfs").innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Waiting for simulation...</div>';
+      renderStats('csp');
+      renderStats('fcfs');
+    }
+
+    // Expose to HTML onclick handlers
+    window.startClock = startClock;
+    window.pauseClock = pauseClock;
+    window.resetClock = resetClock;
+
+    function onTick() {
+      state.simTime += SPEED_MAP[state.speed];
+      bus.emit("tick", state.simTime);
+      checkEndCondition();
+    }
+
+    function checkEndCondition() {
+      if (!patientManager || !cspEngine || !fcfsEngine) return;
+      const totalPatients = patientManager.patients.length;
+      if (totalPatients === 0) return;
+
+      // Check that all patients have arrived (been queued)
+      const allArrived = patientManager.patients.every(p => p._queued);
+      if (!allArrived) return;
+
+      // Check CSP: global queue empty, all units idle with empty local queues
+      const cspGlobalEmpty = cspEngine.globalQueue.isEmpty;
+      const cspUnitsIdle = cspEngine.resourceUnits.every(u => !u.isBusy && u.localQueue.isEmpty);
+
+      // Check FCFS: same
+      const fcfsGlobalEmpty = fcfsEngine.globalQueue.isEmpty;
+      const fcfsUnitsIdle = fcfsEngine.resourceUnits.every(u => !u.isBusy && u.localQueue.isEmpty);
+
+      if (cspGlobalEmpty && cspUnitsIdle && fcfsGlobalEmpty && fcfsUnitsIdle) {
+        window.pauseClock();
+        state.status = "finished";
+        updateStatusBadge(state.status);
+        revealComparisonPanel();
+      }
+    }
+
+    // ── UI RENDERING ───────────────────────────────────────────────
+    function formatTime(s) {
+      const mins = Math.floor(s / 60);
+      const secs = Math.floor(s % 60);
+      return mins + ":" + secs.toString().padStart(2, '0');
+    }
+
+    function updateUI() {
+      renderQueue('csp'); renderQueue('fcfs');
+      renderResources('csp'); renderResources('fcfs');
+      renderStats('csp'); renderStats('fcfs');
+    }
+    
+    function renderQueue(algo) {
+      const container = document.getElementById(`queue-list-${algo}`);
+      const engine = algo === 'csp' ? cspEngine : fcfsEngine;
+      if (!engine) return;
+      const q = engine.globalQueue.toArray();
+      
+      const badge = container.parentElement.querySelector('.badge');
+      badge.textContent = `${q.length} patients`;
+
+      if (q.length === 0) {
+        container.innerHTML = `<div class="empty-state">Queue is empty</div>`;
+        return;
+      }
+      
+      container.innerHTML = q.map(p => `
+        <div class="patient-card patient-arrive ${p.isAtRisk ? 'at-risk' : ''}" style="border-left-color: var(--sev-${p.severity})">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div style="font-weight:600; font-size:13px;">${p.name} <span class="text-3">#${p.id}</span></div>
+            <div style="font-size:11px; font-weight:600; padding:2px 6px; border-radius:4px; background:var(--sev-${p.severity}); color:white;">Sev ${p.severity}</div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-2);">
+            <div>Arrived: ${formatTime(p.arrival_time)}</div>
+            <div style="color:${p.isAtRisk ? 'var(--red)' : 'var(--text-3)'}; font-weight:${p.isAtRisk ? '600' : '400'};">
+              ${p.isAtRisk ? '⚠️ ' : ''}Deadline: ${formatTime(p.mortalityDeadline)}
+            </div>
+          </div>
+          <div style="font-size:11px; color:var(--text-3);">${p.condition}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderResources(algo) {
+      const container = document.getElementById(`resources-grid-${algo}`);
+      const engine = algo === 'csp' ? cspEngine : fcfsEngine;
+      if (!engine) return;
+      
+      const units = engine.resourceUnits;
+      
+      const busyCount = units.filter(u => u.isBusy).length;
+      const util = units.length > 0 ? Math.round((busyCount / units.length) * 100) : 0;
+      const badge = container.parentElement.querySelector('.badge');
+      badge.textContent = `${util}% utilized`;
+
+      container.innerHTML = units.map(u => `
+        <div class="unit-card ${u.isBusy ? 'unit-busy' : ''}" style="border-left-color: ${u.isBusy ? 'var(--orange)' : 'var(--green)'}">
+          <div class="unit-header">
+            <div class="unit-title">${u.label}</div>
+            <div class="unit-status" style="background:${u.isBusy ? 'var(--orange-light)' : 'var(--green-light)'}; color:${u.isBusy ? 'var(--orange)' : 'var(--green)'}">
+              ${u.isBusy ? 'Busy' : 'Idle'}
+            </div>
+          </div>
+          ${u.isBusy && u.currentPatient ? `
+            <div style="font-size:12px;">
+              <span style="font-weight:600">${u.currentPatient.name}</span> <span class="text-3">#${u.currentPatient.id}</span>
+              <div style="margin-top:4px; display:flex; justify-content:space-between; align-items:center;">
+                <span>${Math.round(((u.totalTime - u.remainingTime) / u.totalTime) * 100)}%</span>
+                <span>${Math.ceil(u.remainingTime)}s left</span>
+              </div>
+              <div style="height:4px; background:var(--surface-2); border-radius:2px; margin-top:4px; overflow:hidden;">
+                <div style="height:100%; width:${((u.totalTime - u.remainingTime) / u.totalTime) * 100}%; background:var(--accent); transition: width 0.1s linear;"></div>
+              </div>
+            </div>
+          ` : `
+            <div class="unit-slot">Waiting for patient...</div>
+          `}
+          ${u.localQueue && u.localQueue.size > 0 ? `
+            <div style="font-size:11px; color:var(--orange); margin-top:4px; font-weight:600;">
+              + ${u.localQueue.size} in local queue
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderStats(algo) {
+      const stats = algo === 'csp' ? state.csp.stats : state.fcfs.stats;
+      if (!stats) return;
+      const tab = document.getElementById(`tab-${algo}`);
+      const cards = tab.querySelectorAll('.stat-card');
+      cards[0].querySelector('.stat-value').textContent = state.patients.length;
+      cards[1].querySelector('.stat-value').textContent = stats.treated ?? 0;
+      cards[2].querySelector('.stat-value').textContent = (stats.avgWaitMinutes ?? 0).toFixed(1) + " min";
+      cards[3].querySelector('.stat-value').textContent = stats.treated ?? 0;
+      cards[4].querySelector('.stat-value').textContent = stats.deceased ?? 0;
+    }
+
+    function renderEventLog(data) {
+      const container = document.getElementById(`event-log-${data.algorithm}`);
+      let msg = "";
+      let icon = "";
+      const p = data.patient;
+      
+      switch(data.type) {
+        case "arrival":
+          icon = "🔵"; msg = `Patient <b>${p.name}</b> arrived.`; break;
+        case "ac3_eliminated":
+          icon = "❌"; msg = `<b>AC-3</b> eliminated <i>${data.resourceType}</i> for ${p.name}.`; break;
+        case "treatment_start":
+          icon = "⏳"; msg = `<b>${p.name}</b> started treatment at <i>${data.unit.label}</i>.`; break;
+        case "treatment_done":
+          icon = "✅"; msg = `<b>${p.name}</b> completed treatment at <i>${data.unit.label}</i>.`; break;
+        case "at_risk":
+          icon = "⚠️"; msg = `<b>${p.name}</b> is at risk of expiring (${Math.ceil(data.timeLeft)}s left).`; break;
+        case "deceased":
+          icon = "☠️"; msg = `<b>${p.name}</b> expired while waiting.`; break;
+        default: return;
+      }
+      
+      const div = document.createElement("div");
+      div.style.padding = "4px 0";
+      div.style.borderBottom = "1px solid var(--border-2)";
+      div.innerHTML = `<span style="color:var(--text-3); margin-right:4px;">[${formatTime(state.simTime)}]</span> ${icon} ${msg}`;
+      container.prepend(div);
+      
+      if (container.children.length > 50) container.lastChild.remove();
+      
+      const empty = container.querySelector('.empty-state');
+      if (empty) empty.remove();
+    }
+    
+    function revealComparisonPanel() { 
+      const cspS = state.csp.stats;
+      const fcfsS = state.fcfs.stats;
+      
+      const panel = document.getElementById('comparisonPanel');
+      panel.style.display = 'block';
+      
+      const rowsCSP = panel.querySelectorAll('.comp-card:first-child .comp-row span.mono');
+      const rowsFCFS = panel.querySelectorAll('.comp-card:last-child .comp-row span.mono');
+      
+      rowsCSP[0].textContent = cspS.avgWaitMinutes.toFixed(1) + " min";
+      rowsFCFS[0].textContent = fcfsS.avgWaitMinutes.toFixed(1) + " min";
+      if (cspS.avgWaitMinutes < fcfsS.avgWaitMinutes) rowsCSP[0].parentElement.classList.add("winner");
+      else if (fcfsS.avgWaitMinutes < cspS.avgWaitMinutes) rowsFCFS[0].parentElement.classList.add("winner");
+      
+      rowsCSP[1].textContent = cspS.treated;
+      rowsFCFS[1].textContent = fcfsS.treated;
+      if (cspS.treated > fcfsS.treated) rowsCSP[1].parentElement.classList.add("winner");
+      else if (fcfsS.treated > cspS.treated) rowsFCFS[1].parentElement.classList.add("winner");
+      
+      rowsCSP[2].textContent = cspS.deceased;
+      rowsFCFS[2].textContent = fcfsS.deceased;
+      if (cspS.deceased < fcfsS.deceased) rowsCSP[2].parentElement.classList.add("winner");
+      else if (fcfsS.deceased < cspS.deceased) rowsFCFS[2].parentElement.classList.add("winner");
+      
+      if (cspResources && fcfsResources) {
+        const cspBusy = cspResources.units.reduce((sum, u) => sum + u.busyTime, 0);
+        const cspTotal = cspResources.units.length * state.simTime;
+        const cspUtil = cspTotal > 0 ? (cspBusy / cspTotal * 100).toFixed(1) + "%" : "0%";
+        
+        const fcfsBusy = fcfsResources.units.reduce((sum, u) => sum + u.busyTime, 0);
+        const fcfsTotal = fcfsResources.units.length * state.simTime;
+        const fcfsUtil = fcfsTotal > 0 ? (fcfsBusy / fcfsTotal * 100).toFixed(1) + "%" : "0%";
+
+        rowsCSP[3].textContent = cspUtil;
+        rowsFCFS[3].textContent = fcfsUtil;
+      }
+      
+      rowsCSP[4].textContent = state.csp.maxQueue;
+      rowsFCFS[4].textContent = state.fcfs.maxQueue;
+      if (state.csp.maxQueue < state.fcfs.maxQueue) rowsCSP[4].parentElement.classList.add("winner");
+      else if (state.fcfs.maxQueue < state.csp.maxQueue) rowsFCFS[4].parentElement.classList.add("winner");
+      
+      rowsCSP[5].textContent = "-";
+      rowsFCFS[5].textContent = "-";
+
+      // Calculate summary
+      const savedDiff = cspS.deceased - fcfsS.deceased; // negative means CSP is better
+      const timeRatio = fcfsS.avgWaitMinutes > 0 ? ((fcfsS.avgWaitMinutes - cspS.avgWaitMinutes) / fcfsS.avgWaitMinutes * 100) : 0;
+      
+      let cspWins = 0;
+      let fcfsWins = 0;
+      if (cspS.avgWaitMinutes < fcfsS.avgWaitMinutes) cspWins++; else if (fcfsS.avgWaitMinutes < cspS.avgWaitMinutes) fcfsWins++;
+      if (cspS.treated > fcfsS.treated) cspWins++; else if (fcfsS.treated > cspS.treated) fcfsWins++;
+      if (cspS.deceased < fcfsS.deceased) cspWins++; else if (fcfsS.deceased < cspS.deceased) fcfsWins++;
+      if (state.csp.maxQueue < state.fcfs.maxQueue) cspWins++; else if (state.fcfs.maxQueue < state.csp.maxQueue) fcfsWins++;
+      
+      let overallWinner = "CSP";
+      if (fcfsWins > cspWins) overallWinner = "FCFS";
+      else if (fcfsWins === cspWins && fcfsS.deceased < cspS.deceased) overallWinner = "FCFS";
+
+      let summaryText = "";
+      if (overallWinner === "FCFS") {
+         summaryText = "Unexpected result. Consider increasing the difficulty level.";
+         panel.querySelector('.comp-card:last-child').style.borderColor = "#eab308";
+         panel.querySelector('.comp-card:last-child .comp-card-title').innerHTML += " 🏆";
+      } else {
+         if (timeRatio > 0) summaryText += `CSP was ${timeRatio.toFixed(1)}% faster on average`;
+         else summaryText += `CSP was ${Math.abs(timeRatio).toFixed(1)}% slower on average`;
+         
+         if (savedDiff < 0) summaryText += ` and prevented ${Math.abs(savedDiff)} additional deaths.`;
+         else if (savedDiff > 0) summaryText += ` but resulted in ${savedDiff} more deaths.`;
+         else summaryText += ` with the same mortality rate.`;
+         
+         panel.querySelector('.comp-card:first-child').style.borderColor = "#eab308";
+         panel.querySelector('.comp-card:first-child .comp-card-title').innerHTML += " 🏆";
+      }
+      
+      document.getElementById('comp-summary').textContent = summaryText;
+
+      // Draw Phase 3 Charts
+      if (cspStats && fcfsStats) {
+        setTimeout(() => {
+          const lineChart = new LineChart('chart-waittime');
+          lineChart.update(
+            cspStats.waitTimeSeries.map(s => ({ t: s.t, val: s.avgWait })),
+            fcfsStats.waitTimeSeries.map(s => ({ t: s.t, val: s.avgWait }))
+          );
+          
+          const areaChart = new AreaChart('chart-queue');
+          areaChart.update(
+            cspStats.queueLengthSeries.map(s => ({ t: s.t, val: s.length })),
+            fcfsStats.queueLengthSeries.map(s => ({ t: s.t, val: s.length }))
+          );
+
+          const barChart = new BarChart('chart-utilization');
+          barChart.update(
+            cspStats.computeUtilization(cspEngine.resourceUnits, state.simTime),
+            fcfsStats.computeUtilization(fcfsEngine.resourceUnits, state.simTime)
+          );
+
+          const donutChart = new DonutChart('chart-severity');
+          const severities = {1:0, 2:0, 3:0, 4:0, 5:0};
+          state.patients.forEach(p => severities[p.severity]++);
+          donutChart.update(severities);
+
+          const mortChart = new MortalityChart('chart-mortality');
+          mortChart.update(state.csp.stats, state.fcfs.stats);
+
+        }, 500); // Wait for panel reveal animation
+      }
+      
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+    
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = type === 'success' 
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+      toast.innerHTML += `<span>${msg}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+    window.showToast = showToast;
+
+    function updateStatusBadge(s) {
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      dot.className = 'status-dot ' + s;
+      text.textContent = s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function renderResourceConfig() {
+      const container = document.getElementById('resourceCardsContainer');
+      container.innerHTML = '';
+      RESOURCE_DEF.forEach(res => {
+        const count = state.resources[res.id];
+        let suffClass = 'suff-sufficient';
+        let suffText = 'Sufficient';
+        if (count < 2) { suffClass = 'suff-critical'; suffText = 'Critical'; }
+        else if (count < 4) { suffClass = 'suff-limited'; suffText = 'Limited'; }
+        
+        container.innerHTML += `
+          <div class="resource-card">
+            <div class="resource-card-header">
+              <div class="resource-icon">${res.icon}</div>
+              <div class="resource-info">
+                <span class="resource-name">${res.name}</span>
+                <span class="resource-sub">${res.sub}</span>
+              </div>
+            </div>
+            <div class="resource-count-container">
+              <span class="resource-count mono">${count}</span>
+              <div class="resource-controls">
+                <button class="res-btn" onclick="updateResource('${res.id}', -1)">−</button>
+                <button class="res-btn" onclick="updateResource('${res.id}', 1)">+</button>
+              </div>
+            </div>
+            <div class="sufficiency-pill ${suffClass}">${suffText}</div>
+          </div>
+        `;
+      });
+    }
+
+    function updateResource(id, delta) {
+      if (state.status === 'running') return;
+      let val = state.resources[id] + delta;
+      if (val < 1) val = 1;
+      if (val > 20) val = 20;
+      state.resources[id] = val;
+      renderResourceConfig();
+    }
+    window.updateResource = updateResource;
+
+    // ── JSON IMPORT ────────────────────────────────────────────────
+    function validateJSON(data) { return new Validator().validate(data); }
+    
+    function loadPatients(data) {
+      state.patients = data.patients;
+      resetClock();
+      document.getElementById('btnPlay').disabled = false;
+      document.getElementById('importBtnText').textContent = `${state.patients.length} loaded`;
+      showToast(`Successfully imported ${state.patients.length} patients`, 'success');
+    }
+
+    // ── RANDOM PATIENT GENERATOR (Poisson arrivals) ─────────────────
+    const RANDOM_NAMES = [
+      "Ahmed Mohamed","Sara Ali","Omar Hassan","Fatma Ibrahim","Nour Sayed",
+      "Khaled Mahmoud","Mona Adel","Youssef Kamal","Dina Fawzy","Tarek Nasser",
+      "Hana Samir","Bassem Lotfy","Rania Gamal","Sherif Wahid","Layla Mostafa",
+      "Amr Salah","Noha Ramzy","Wael Hamdy","Eman Fouad","Samy Aziz",
+      "Mariam Taha","Hossam Zaki","Doaa Magdy","Ayman Sobhy","Reem Khalil",
+      "Mostafa Nabil","Yasmin Essam","Kareem Farouk","Salma Osama","Adel Ragab"
+    ];
+
+    const CONDITIONS = ["heart","fracture","diabetes","respiratory","general"];
+
+    // Treatment durations (seconds) per condition — realistic ranges
+    const TREATMENT_RANGES = {
+      heart:       { min: 120, max: 600 },
+      fracture:    { min: 180, max: 480 },
+      diabetes:    { min:  60, max: 240 },
+      respiratory: { min: 150, max: 540 },
+      general:     { min:  45, max: 180 },
+    };
+
+    // Mortality windows (seconds) per severity
+    const MORTALITY_WINDOWS = {
+      5: { min: 120,  max: 300  },
+      4: { min: 300,  max: 900  },
+      3: { min: 600,  max: 1800 },
+      2: { min: 3600, max: 9999 },
+      1: { min: 9999, max: 9999 },
+    };
+
+    // Severity probability weights — fixed realistic mix (sev 1→5)
+    const SEV_WEIGHTS = [0.10, 0.25, 0.35, 0.20, 0.10];
+
+    function randInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function sampleSeverity() {
+      const r = Math.random();
+      let cumulative = 0;
+      for (let i = 0; i < SEV_WEIGHTS.length; i++) {
+        cumulative += SEV_WEIGHTS[i];
+        if (r < cumulative) return i + 1;
+      }
+      return 3;
+    }
+
+    // Exponential inter-arrival: -ln(U) / λ
+    function sampleInterArrival(lambda) {
+      return -Math.log(1 - Math.random()) / lambda;
+    }
+
+    function generateRandomPatients(count) {
+      const lambda = 1 / 60; // 1 patient per 60 sim-seconds on average
+      const patients = [];
+      let currentTime = 0;
+      const usedNames = new Set();
+
+      for (let i = 0; i < count; i++) {
+        currentTime += sampleInterArrival(lambda);
+
+        const severity  = sampleSeverity();
+        const condition = CONDITIONS[Math.floor(Math.random() * CONDITIONS.length)];
+        const range     = TREATMENT_RANGES[condition];
+        const mwRange   = MORTALITY_WINDOWS[severity];
+
+        let name;
+        const available = RANDOM_NAMES.filter(n => !usedNames.has(n));
+        name = available.length > 0
+          ? available[Math.floor(Math.random() * available.length)]
+          : `Patient ${i + 1}`;
+        usedNames.add(name);
+
+        patients.push({
+          id:                 `P${String(i + 1).padStart(3, '0')}`,
+          name,
+          condition,
+          severity,
+          arrival_time:       Math.floor(currentTime),
+          treatment_duration: randInt(range.min, range.max),
+          mortality_window:   mwRange.min === mwRange.max
+                                ? mwRange.min
+                                : randInt(mwRange.min, mwRange.max),
+        });
+      }
+
+      return patients;
+    }
+
+    // ── EXPORT ─────────────────────────────────────────────────────
+    function exportResults() {
+      if (!cspStats || !fcfsStats) { showToast("No simulation data to export", "error"); return; }
+      const exporter = new Exporter();
+      exporter.export(
+         cspStats.computeFinalStats(state.patients),
+         fcfsStats.computeFinalStats(state.patients),
+         state.resources,
+         state.level,
+         state.simTime
+      );
+      showToast("Results exported to JSON", "success");
+    }
+    window.exportResults = exportResults;
+
+    // ── EVENT LISTENERS ────────────────────────────────────────────
+    document.getElementById('btnPlay').addEventListener('click', startClock);
+    document.getElementById('btnPause').addEventListener('click', pauseClock);
+    document.getElementById('btnReset').addEventListener('click', resetClock);
+    
+    document.getElementById('configToggle').addEventListener('click', () => {
+      document.getElementById('resourceConfig').classList.toggle('collapsed');
+    });
+
+    // Level Selector
+    document.querySelectorAll('.level-card').forEach(card => {
+      card.addEventListener('click', () => {
+        if (state.status === 'running') return;
+        document.querySelectorAll('.level-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        state.level = card.dataset.level;
+        
+        if (state.level === 'easy') { state.resources = { doctors:6, nurses:10, xray:4, ecg:4, labs:3, opRooms:2 }; }
+        else if (state.level === 'medium') { state.resources = { doctors:3, nurses:5, xray:2, ecg:2, labs:2, opRooms:1 }; }
+        else if (state.level === 'hard') { state.resources = { doctors:1, nurses:2, xray:1, ecg:1, labs:1, opRooms:1 }; }
+        
+        renderResourceConfig();
+      });
+    });
+
+    // Speed Control
+    document.querySelectorAll('.speed-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.speed = parseInt(btn.dataset.speed);
+      });
+    });
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        btn.classList.add('active');
+        document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+        
+        const tabIndicator = document.getElementById('tabIndicator');
+        tabIndicator.style.width = `${btn.offsetWidth}px`;
+        tabIndicator.style.left = `${btn.offsetLeft}px`;
+      });
+    });
+
+    // Import Flow
+    document.getElementById('btnImport').addEventListener('click', () => {
+      if (state.status === 'running') return;
+      document.getElementById('fileInput').click();
+    });
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = JSON.parse(evt.target.result);
+          const validation = validateJSON(data);
+          if (validation.valid) {
+            loadPatients(data);
+          } else {
+            showToast("Invalid JSON format. Please check the file structure.", 'error');
+          }
+        } catch (err) {
+          showToast("Error parsing JSON file", 'error');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    // Quick Generate — random count between 15 and 30
+    document.getElementById('btnSample').addEventListener('click', () => {
+      if (state.status === 'running') return;
+      const count    = randInt(15, 30);
+      const patients = generateRandomPatients(count);
+      loadPatients({ patients });
+      showToast(`Quick generated ${count} random patients`, 'success');
+    });
+
+    // Custom Generate — user-specified count
+    function runCustomGenerate() {
+      if (state.status === 'running') return;
+      const raw   = parseInt(document.getElementById('customGenInput').value);
+      const count = Math.min(200, Math.max(1, isNaN(raw) ? 20 : raw));
+      const patients = generateRandomPatients(count);
+      loadPatients({ patients });
+      document.getElementById('customGenInput').value = '';
+      showToast(`Generated ${count} random patients`, 'success');
+    }
+    document.getElementById('btnCustomGen').addEventListener('click', runCustomGenerate);
+    document.getElementById('customGenInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') runCustomGenerate();
+    });
+
+    // Initialization
+    renderResourceConfig();
+    
+    setTimeout(() => {
+      const firstTab = document.querySelector('.tab-btn');
+      if (firstTab) {
+        const tabIndicator = document.getElementById('tabIndicator');
+        tabIndicator.style.width = `${firstTab.offsetWidth}px`;
+        tabIndicator.style.left = `${firstTab.offsetLeft}px`;
+      }
+    }, 100);
+
+  </script>
+</body>
+</html>
